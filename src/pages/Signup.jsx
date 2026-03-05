@@ -19,14 +19,7 @@ export default function Signup() {
 
   const { handleSubmit, register, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: "Rawan Hassan",
-      email: "rawan1200@gmail.com",
-      password: "1234567@RHSrawan",
-      rePassword: "1234567@RHSrawan",
-      dateOfBirth: "2004-10-10",
-      gender: "female"
-    }
+    
   })
 
   async function signUp(registerData) {

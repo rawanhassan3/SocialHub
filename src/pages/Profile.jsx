@@ -25,6 +25,7 @@ export default function Profile() {
   const [userPosts, setUserPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [activeTab, setActiveTab] = useState('posts');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // ── Sync Tab with Navigation State ───────────────────
   useEffect(() => {
@@ -233,13 +234,33 @@ export default function Profile() {
 
               {/* Name under avatar - mobile only */}
               <div className="mt-3 sm:hidden">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">{displayName}</h1>
-                {displayUsername && (
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">@{displayUsername}</p>
-                )}
-                <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
-                  {userPosts.length} {userPosts.length === 1 ? 'post' : 'posts'}
-                </p>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h1 className="text-xl font-bold text-gray-900 dark:text-white">{displayName}</h1>
+                    {displayUsername && (
+                      <p className="text-gray-500 dark:text-gray-400 text-sm">@{displayUsername}</p>
+                    )}
+                    <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
+                      {userPosts.length} {userPosts.length === 1 ? 'post' : 'posts'}
+                    </p>
+                  </div>
+                  {/* Mobile toggle button — opens top panel */}
+                  <button
+                    onClick={() => setSidebarOpen(prev => !prev)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all mt-1 ${sidebarOpen
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white dark:bg-[#2a2a2a] text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-400 hover:text-blue-600'
+                      }`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      {sidebarOpen
+                        ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        : <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      }
+                    </svg>
+                    {sidebarOpen ? 'Close' : 'Info'}
+                  </button>
+                </div>
               </div>
 
               {/* Feedback messages */}
@@ -288,11 +309,118 @@ export default function Profile() {
           </div>
         </div>{/* end cover+header wrapper */}
 
+        {/* ── Mobile Top Panel Overlay ── */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* ── Mobile Top-Sliding Panel ── */}
+        <div
+          className={`fixed top-0 left-0 right-0 z-50 bg-white dark:bg-[#1a1a1a] shadow-2xl lg:hidden transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-y-0' : '-translate-y-full'
+            }`}
+        >
+          {/* Panel Header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">Profile Info</h2>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Panel Body */}
+          <div className="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
+            {/* About Card */}
+            <div className="bg-gray-50 dark:bg-[#252525] rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+              <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4">About</h2>
+              <ul className="space-y-3 text-sm">
+                {user?.email && (
+                  <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                    <span className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </span>
+                    <span className="truncate">{user.email}</span>
+                  </li>
+                )}
+                {displayUsername && displayUsername !== user?.email && (
+                  <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                    <span className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </span>
+                    @{displayUsername}
+                  </li>
+                )}
+                <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                  <span className="w-8 h-8 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </span>
+                  {userPosts.length} {userPosts.length === 1 ? 'post' : 'posts'} published
+                </li>
+              </ul>
+            </div>
+
+            {/* Quick Actions Card */}
+            <div className="bg-gray-50 dark:bg-[#252525] rounded-2xl border border-gray-200 dark:border-gray-800 p-5 mb-2">
+              <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+              <div className="space-y-2">
+                <button
+                  onClick={() => { triggerUpload(); setSidebarOpen(false); }}
+                  disabled={uploading}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-[#2a2a2a] transition-colors text-left"
+                >
+                  <span className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </span>
+                  Update Profile Photo
+                </button>
+                <button
+                  onClick={() => { setActiveTab('settings'); setSidebarOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-[#2a2a2a] transition-colors text-left"
+                >
+                  <span className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </span>
+                  Change Password
+                </button>
+                <Link to="/Signin"
+                  onClick={() => { logout(); setSidebarOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors text-left"
+                >
+                  <span className="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                  </span>
+                  Log Out
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* ── Two-column Grid Layout ── */}
         <div className="py-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
-          {/* ── LEFT SIDEBAR ── */}
-          <div className="lg:col-span-1 space-y-4 self-start sticky top-20">
+          {/* ── LEFT SIDEBAR — hidden on mobile, visible on desktop ── */}
+          <div className="hidden lg:block lg:col-span-1 space-y-4 self-start sticky top-20">
 
             {/* About Card */}
             <div className="bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-sm dark:shadow-black/20 border border-gray-200 dark:border-gray-800 p-5">
@@ -411,7 +539,7 @@ export default function Profile() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                       </svg>
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium">You haven't created any posts yet.</p>
+                    <p className="text-gray-500 dark:text-400 font-medium">You haven't created any posts yet.</p>
                     <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Share something with your network!</p>
                   </div>
                 )}
