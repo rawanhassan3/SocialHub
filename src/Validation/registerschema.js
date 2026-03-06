@@ -5,7 +5,7 @@ export const schema = zod.object({
 
     name: zod.string()
     .nonempty("Name is Required")
-    .min(2,'Name must be at least two characters!')
+    .min(3,'Name must be at least three characters!')
     .max(50, 'Name must be at most 50 characters!'),
     email:zod.string()
     .nonempty("Email is Required")
