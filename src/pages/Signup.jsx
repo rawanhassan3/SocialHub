@@ -19,7 +19,7 @@ export default function Signup() {
 
   const { handleSubmit, register, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    
+
   })
 
   async function signUp(registerData) {
@@ -37,7 +37,8 @@ export default function Signup() {
       navigate('/')
     } catch (error) {
       if (error.response) {
-        setErrMsg(error.response.data.error);
+        const d = error.response.data;
+        setErrMsg(d.message || d.errors || d.error);
       } else {
         setErrMsg(error.message);
       }
