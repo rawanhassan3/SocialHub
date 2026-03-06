@@ -65,7 +65,7 @@ export default function Signin() {
         <p className="mt-3 text-center text-sm text-gray-600 dark:text-gray-400">
           Don't have an account?{' '}
           <Link to="/Signup" className="font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
-            Sign up for free
+            Sign up 
           </Link>
         </p>
       </div>
